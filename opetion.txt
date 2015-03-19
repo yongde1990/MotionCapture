@@ -1,0 +1,84 @@
+
+set serverip 192.168.1.100
+set ipaddr 192.168.1.17
+set bootargs noinitrd root=/dev/nfs nfsroot=192.168.1.124:/work/nfs_root/fs_mini_mdev ip=192.168.1.17:192.168.1.124:192.168.1.1:255.255.255.0::eth0:off init=/linuxrc console=ttySAC0
+
+set bootargs noinitrd root=/dev/mtdblock3 init=/linuxrc console=ttySAC0
+
+export TSLIB_TSDEVICE=/dev/event0
+export TSLIB_CALIBFILE=/etc/pointercal
+export TSLIB_CONFFILE=/etc/ts.conf
+export TSLIB_PLUGINDIR=/lib/ts
+export TSLIB_CONSOLEDEVICE=none
+export TSLIB_FBDEVICE=/dev/fb0
+ts_calibrate
+insmod uart.ko
+./MotionCapture &
+
+cp MotionCapture /work/nfs_root/fs_mini_mdev/
+
+./MotionCapture
+
+cp /work/nfs_root/fs_mini_mdev/ .
+----------------------------------------------------
+开机自启：
+vi /work/nfs_root/fs_mini_mdev/etc/init.d/rcS
+vi /etc/init.d/rcS 添加：
+
+export TSLIB_TSDEVICE=/dev/event0
+export TSLIB_CALIBFILE=/etc/pointercal
+export TSLIB_CONFFILE=/etc/ts.conf
+export TSLIB_PLUGINDIR=/lib/ts
+export TSLIB_CONSOLEDEVICE=none
+export TSLIB_FBDEVICE=/dev/fb0
+
+ts_calibrate
+
+/MotionCapture &
+-----------------------------------------
+J3接口
+SPIMISO-> GPG5[11:10] ->33 --> 串口1(2) --> 右 
+SPIMOSI-> GPG6[13:12] ->35 --> 串口2(3) --> 左  --> 汇总数据
+
+GND RX TX VCC
+    黑 红
+
+GPG5输出低电平时，串口1(2)开始读取25字节右臂右手数据
+GPG6输出低电平时，串口2(3)开始读取29字节左臂左手数据
+传感器数据格式:
+(右臂24字节)+(右手1字节)+(左臂24字节)+(左手5字节)
+
+#define RigthDataLength 25
+#define LeftDataLength 29
+
+----------------------------------
+MSP430G2553
+P1.2=TXD
+P1.4接收端口
+-------------------------------
+2440串口：
+GND RX TX VCC
+    黑 红
+    
+------------------------------------------------
+struct tm {
+               int tm_sec;         /* seconds */
+               int tm_min;         /* minutes */
+               int tm_hour;        /* hours */
+               int tm_mday;        /* day of the month */
+               int tm_mon;         /* month */
+               int tm_year;        /* year */
+               int tm_wday;        /* day of the week */
+               int tm_yday;        /* day in the year */
+               int tm_isdst;       /* daylight saving time */
+           };
+----------------------------------------------
+回放时：
+① 应用程序 休眠50ms
+② 在m3上进行每隔50ms发送数据处理
+
+----------------------------------------
+mkyaffs2image fs_mini_mdev MotionCation.yaffs2
+------------------------------------
+
+48 vector icons

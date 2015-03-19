@@ -1,0 +1,78 @@
+./
+|-- display
+|   |-- disp_manager.c
+|   |-- fb.c  
+|   |-- Makefile
+|   `-- test
+|       |-- Makefile
+|       `-- test.c
+|
+|-- encoding
+|   |-- ascii.c
+|   |-- encoding_manager.c
+|   |-- Makefile
+|   |-- utf-16be.c
+|   |-- utf-16le.c
+|   `-- utf-8.c
+|-- fonts
+|   |-- ascii.c
+|   |-- fonts_manager.c
+|   |-- freetype.c
+|   |-- gbk.c
+|   `-- Makefile
+|-- include
+|   |-- config.h
+|   |-- disp_manager.h
+|   |-- draw.h
+|   |-- encoding_manager.h
+|   `-- fonts_manager.h
+|-- log.txt
+|-- main.c
+`-- Makefile
+-----------------------------------------
+fb.c
+初始化：FBDeviceInit 设置g_tFBOpr、映射显存
+g_dwScreenSize 屏幕总大小
+g_pucFBMem fb（显存）映射到用户空间
+g_tFBOpr 液晶屏的抽象 
+ptDispOpr - 一个结构体,内含显示设备的操作函数
+
+disp_manage.c
+VideoMem 显存的抽象
+g_ptDefaultDispOpr液晶操作 结构体
+g_ptVideoMemHead 页面内存、fb 结构体
+g_ptVideoMemHead 显存链表
+
+file.c
+GetDirContents 得到目录中的文件
+int GetDirContents(char *strDirName, PT_DirContent **pptDirContents, int *piNumber)	
+输入：strDirName - 目录名
+输出： 
+pptDirContents - (*pptDirContents)指向一个PT_DirContent数组,
+(*pptDirContents)[0,1,...]指向T_DirContent结构体,
+T_DirContent中含有"目录/文件"的名字等信息
+piNumber       - strDirName下含有多少个"顶层子目录/顶层文件",即数组(*pptDirContents)[0,1,...]有多少项
+返回值：0 表示成功
+
+***************GetFilesIndir此函数可以删除
+
+Touchscreen.c (input)
+g_tTouchScreenOpr 输入设备抽象
+g_ptInputOprHead 输入设备对象链表
+g_tInputEvent 获得的触屏数据
+
+fonts 位图信息
+freetype.c
+g_ptFontOprHead
+
+encoding编码
+
+
+bmp.c
+GetPixelDatasForIcon 得到bmp图片数据和信息
+
+图片数据：
+图片像素数据结构体
+PixelDatas
+
+
